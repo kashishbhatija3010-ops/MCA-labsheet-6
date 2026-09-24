@@ -179,7 +179,7 @@ print("Predicted final grade:", round(float(reg.predict(sample)[0]), 2), "/ 20")
 print("Actual final grade   :", y_test.iloc[0])
 print("Predicted result     :", "Pass" if clf.predict(sample)[0] == 1 else "Fail")
 
-# 11 Show predictions for the first 10 test students
+# 11. Show predictions for the first 10 test students
 sample_students = X_test.iloc[:10]
 comparison = pd.DataFrame({
     "Actual grade": y_test.iloc[:10].values,
@@ -189,7 +189,7 @@ comparison = pd.DataFrame({
 })
 print(comparison)
 
-# 12 Classification accuracy (Pass/Fail)
+# 12. Classification accuracy (Pass/Fail)
 clf_pred = best_classifier.predict(Xc_test)
 accuracy_pct = accuracy_score(yc_test, clf_pred) * 100
 correct = (clf_pred == yc_test.values).sum()
@@ -382,7 +382,7 @@ new_house = pd.DataFrame([{
 }])
 print("Predicted price: {:,.0f}".format(loaded_model.predict(new_house)[0]))
 
-# 11 Final accuracy summary 
+# 11. Final accuracy summary 
 r2_pct = r2_score(y_test, best_pred) * 100
 mape = np.mean(np.abs((y_test - best_pred) / y_test)) * 100
 within_10_pct = (np.abs((y_test - best_pred) / y_test) <= 0.10).mean() * 100
