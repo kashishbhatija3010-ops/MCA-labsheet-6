@@ -179,6 +179,43 @@ print("Predicted final grade:", round(float(reg.predict(sample)[0]), 2), "/ 20")
 print("Actual final grade   :", y_test.iloc[0])
 print("Predicted result     :", "Pass" if clf.predict(sample)[0] == 1 else "Fail")
 
+# 11 Show predictions for the first 10 test students
+sample_students = X_test.iloc[:10]
+comparison = pd.DataFrame({
+    "Actual grade": y_test.iloc[:10].values,
+    "Predicted grade": reg.predict(sample_students).round(2),
+    "Actual result": np.where(y_test.iloc[:10].values >= 10, "Pass", "Fail"),
+    "Predicted result": np.where(clf.predict(sample_students) == 1, "Pass", "Fail"),
+})
+print(comparison)
+
+# 12 Classification accuracy (Pass/Fail)
+clf_pred = best_classifier.predict(Xc_test)
+accuracy_pct = accuracy_score(yc_test, clf_pred) * 100
+correct = (clf_pred == yc_test.values).sum()
+
+# Regression performance
+reg_pred = best_regressor.predict(X_test)
+r2_pct = r2_score(y_test, reg_pred) * 100
+within_1_mark_pct = (np.abs(y_test - reg_pred) <= 1).mean() * 100
+within_2_marks_pct = (np.abs(y_test - reg_pred) <= 2).mean() * 100
+
+print("=" * 55)
+print("FINAL MODEL PERFORMANCE SUMMARY")
+print("=" * 55)
+print(f"Classification model : {class_df.loc[0, 'Model']}")
+print(f"Accuracy             : {accuracy_pct:.2f}%  ({correct} of {len(yc_test)} students correct)")
+print(f"Precision            : {precision_score(yc_test, clf_pred) * 100:.2f}%")
+print(f"Recall               : {recall_score(yc_test, clf_pred) * 100:.2f}%")
+print(f"F1-score             : {f1_score(yc_test, clf_pred) * 100:.2f}%")
+print("-" * 55)
+print(f"Regression model     : {best_model_name}")
+print(f"R2 score             : {r2_pct:.2f}%  (variation in grades explained)")
+print(f"MAE                  : {mean_absolute_error(y_test, reg_pred):.2f} marks out of 20")
+print(f"Predictions within ±1 mark : {within_1_mark_pct:.2f}%")
+print(f"Predictions within ±2 marks: {within_2_marks_pct:.2f}%")
+print("=" * 55)
+
 
 # Project 2: House Price Prediction System
 # 1. Imports
@@ -344,3 +381,22 @@ new_house = pd.DataFrame([{
     "furnishingstatus": "semi-furnished",
 }])
 print("Predicted price: {:,.0f}".format(loaded_model.predict(new_house)[0]))
+
+# 11 Final accuracy summary 
+r2_pct = r2_score(y_test, best_pred) * 100
+mape = np.mean(np.abs((y_test - best_pred) / y_test)) * 100
+within_10_pct = (np.abs((y_test - best_pred) / y_test) <= 0.10).mean() * 100
+within_20_pct = (np.abs((y_test - best_pred) / y_test) <= 0.20).mean() * 100
+
+print("=" * 55)
+print("FINAL MODEL PERFORMANCE SUMMARY")
+print("=" * 55)
+print(f"Best model               : {best_model_name}")
+print(f"R2 score                 : {r2_pct:.2f}%  (price variation explained)")
+print(f"MAE                      : {mean_absolute_error(y_test, best_pred):,.0f}")
+print(f"RMSE                     : {np.sqrt(mean_squared_error(y_test, best_pred)):,.0f}")
+print(f"Average error (MAPE)     : {mape:.2f}%")
+print(f"Prediction accuracy      : {100 - mape:.2f}%  (100 - MAPE)")
+print(f"Predictions within ±10%  : {within_10_pct:.2f}% of houses")
+print(f"Predictions within ±20%  : {within_20_pct:.2f}% of houses")
+print("=" * 55)
